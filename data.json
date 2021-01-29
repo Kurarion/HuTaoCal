@@ -1,0 +1,147 @@
+{
+    "character": {
+        "atk": 106,
+        "def": 876,
+        "boold": 15552,
+        "skills": [
+            {
+                "name": "",
+                "damageRate": 0,
+                "damageTypes": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "name": "",
+                "damageRate": 0,
+                "damageTypes": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "damageBoosts": [
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            }
+        ],
+        "critRate": 5,
+        "critDamageRate": 0.5,
+        "eleValue": 0,
+        "atkBuffRate": 0,
+        "defBuffRate": 0,
+        "booldBuffRate": 0,
+        "damageBoostBuffs": [
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            }
+        ],
+        "critRateBuff": 0,
+        "critDamageRateBuff": 0.384,
+        "eleValueBuff": 0
+    },
+    "weapon": {
+        "atk": 0,
+        "atkBuffRate": 0,
+        "defBuffRate": 0,
+        "booldBuffRate": 0,
+        "damageBoostBuffs": [
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": ""
+            }
+        ],
+        "critRateBuff": 0,
+        "critDamageRateBuff": 0,
+        "eleValueBuff": 0
+    },
+    "artifacts": [
+        {
+            "mainAtk": 0,
+            "mainDef": 0,
+            "mainBoold": 0,
+            "mainEleValue": 0,
+            "mainAtkBuffRate": 0,
+            "mainDefBuffRate": 0,
+            "mainBooldBuffRate": 0,
+            "mainDamageBoostBuffs": null,
+            "mainCritRateBuff": 0,
+            "mainCritDamageRateBuff": 0,
+            "mainEleValueBuff": 0,
+            "mainChargeRateBuff": 0,
+            "atk": 0,
+            "def": 0,
+            "boold": 0,
+            "eleValue": 0,
+            "atkBuffRate": 0,
+            "defBuffRate": 0,
+            "booldBuffRate": 0,
+            "damageBoostBuffs": null,
+            "critRateBuff": 0,
+            "critDamageRateBuff": 0,
+            "eleValueBuff": 0,
+            "chargeRateBuff": 0,
+            "name": "",
+            "groups": null,
+            "use": false
+        },
+        {
+            "mainAtk": 0,
+            "mainDef": 0,
+            "mainBoold": 0,
+            "mainEleValue": 0,
+            "mainAtkBuffRate": 0,
+            "mainDefBuffRate": 0,
+            "mainBooldBuffRate": 0,
+            "mainDamageBoostBuffs": null,
+            "mainCritRateBuff": 0,
+            "mainCritDamageRateBuff": 0,
+            "mainEleValueBuff": 0,
+            "mainChargeRateBuff": 0,
+            "atk": 0,
+            "def": 0,
+            "boold": 0,
+            "eleValue": 0,
+            "atkBuffRate": 0,
+            "defBuffRate": 0,
+            "booldBuffRate": 0,
+            "damageBoostBuffs": null,
+            "critRateBuff": 0,
+            "critDamageRateBuff": 0,
+            "eleValueBuff": 0,
+            "chargeRateBuff": 0,
+            "name": "",
+            "groups": null,
+            "use": false
+        }
+    ],
+    "skillPowerRates": null,
+    "groupsMap": null,
+    "artifactsInOne": null,
+    "damageBoosts": null,
+    "baseAtk": null,
+    "atk": null,
+    "def": null,
+    "booldMax": null,
+    "booldRate": null,
+    "booldCurrent": null,
+    "critRate": null,
+    "critDamageRate": null,
+    "eleValue": null,
+    "eleReactionRate": null
+}

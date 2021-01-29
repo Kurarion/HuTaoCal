@@ -1,16 +1,22 @@
 package main
 
-import(
-	"fmt"
+import (
+	"flag"
 	core "huTao/core"
-	types "huTao/types"
 )
 
-func init(){
+var (
+	pathJSON string
+)
 
+func init() {
+	defaultJSONPath := "data.json"
+	flag.StringVar(&pathJSON, "i", defaultJSONPath, "JSONファイルパス")
 }
 
-func main(){
-	
-	fmt.Printf("Damage: %v", core.CalDamage())
+func main() {
+	flag.Parse()
+	// fmt.Printf("Damage: %v", core.CalDamage(pathJSON))
+	// fmt.Println(core.GenerateJSON())
+	core.CalDamage(pathJSON)
 }
