@@ -6,31 +6,37 @@ import (
 )
 
 //GenerateJSON JSONを生成
-func GenerateJSON() string {
-	var test types.BaseArtifact = types.BaseArtifact{}
-	content, err := json.GenerateJSON(test)
-	if err != nil {
-		return ""
+func GenerateJSON(toGen interface{}, err error) string {
+
+	if err == nil {
+		content, err := json.GenerateJSON(toGen)
+		if err != nil {
+			return ""
+		}
+		return string(content)
 	}
-	return string(content)
+	return ""
 }
 
 //CalDamage 計算最終ダメージ
-func CalDamage(path string) {
+func CalDamage(path string) (types.Character, error) {
 	//JSONからデータを読み込み
 	character, err := json.ReadJSON(path)
 	if err != nil {
-		return
+		return types.Character{}, err
 	}
+	character.Init()
 
 	//環境デバフ等
-	var decrese types.Decrease = types.Decrease{}
+	var decrese = getDecrease(&character)
 	decrese.MonstarResisRate = getMonstarResisRate()
 	decrese.LevelResisRate = getLevelResisRate()
 	decrese.FinalDamageDownRate = decrese.LevelResisRate * decrese.MonstarResisRate
 	//相対固定
 	skills := getSkills(&character)
 	groupMap := getGroupMap(&character)
+	//ResultMap
+	resultMap := getResultMap(&character)
 	for i := range groupMap {
 		//配置順で計算
 		//計算用
@@ -41,23 +47,35 @@ func CalDamage(path string) {
 		critRate := getCritRate(&character, i)
 		critDamageRate := getCritDamageRate(&character, i)
 		eleReactionRate := getEleReactionRate(&character, i)
+		//Result
+		var tempResults []types.Result = []types.Result{}
 		//スキル順で計算
 		for ii := range skills {
-
 			//適用
-			damageBoostRate, skillPowerRate := calDamageBoostRate(skills[ii], damageBoostRates)
+			skillPowerRate, damageBoostRate := calDamageBoostRate(skills[ii], damageBoostRates)
 			//結果
 			var tempResult types.Result = types.Result{}
 			tempResult.FinalDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * decrese.FinalDamageDownRate
 			tempResult.FinalDamageWithCrit = tempResult.FinalDamageWithoutCrit * (1 + critDamageRate)
-			tempResult.FinalDamageAverage = tempResult.FinalDamageWithCrit * critRate
+			if critRate > 1 {
+				tempResult.FinalDamageAverage = tempResult.FinalDamageWithCrit
+			} else {
+				tempResult.FinalDamageAverage = tempResult.FinalDamageWithCrit*critRate + tempResult.FinalDamageWithoutCrit*(1-critRate)
+			}
 			tempResult.FinalEleDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * decrese.FinalDamageDownRate * (1 + eleReactionRate)
 			tempResult.FinalEleDamageWithCrit = tempResult.FinalEleDamageWithoutCrit * (1 + critDamageRate)
-			tempResult.FinalEleDamageAverage = tempResult.FinalEleDamageWithCrit * critRate
+			if critRate > 1 {
+				tempResult.FinalEleDamageAverage = tempResult.FinalEleDamageWithCrit
+			} else {
+				tempResult.FinalEleDamageAverage = tempResult.FinalEleDamageWithCrit*critRate + tempResult.FinalEleDamageWithoutCrit*(1-critRate)
+			}
+
+			tempResults = append(tempResults, tempResult)
 		}
+		resultMap[i] = tempResults
 	}
 
-	return
+	return character, nil
 }
 
 func calDamageBoostRate(skill types.BaseSkill, boosts []types.DamageBoost) (skillPowerRate, damageBoostRate float32) {
@@ -92,6 +110,14 @@ func getBoold(c *types.Character, i int) float32 {
 
 func getSkills(c *types.Character) []types.BaseSkill {
 	return c.Skills
+}
+
+func getDecrease(c *types.Character) types.Decrease {
+	return c.Decrease
+}
+
+func getResultMap(c *types.Character) map[int][]types.Result {
+	return c.Results
 }
 
 func getDamageBoostRate(c *types.Character, i int) []types.DamageBoost {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	core "huTao/core"
 )
 
@@ -18,5 +19,5 @@ func main() {
 	flag.Parse()
 	// fmt.Printf("Damage: %v", core.CalDamage(pathJSON))
 	// fmt.Println(core.GenerateJSON())
-	core.CalDamage(pathJSON)
+	fmt.Println(core.GenerateJSON(core.CalDamage(pathJSON)))
 }

@@ -96,13 +96,30 @@ func (c *DamageBoost) add(toAdd DamageBoost) *DamageBoost {
 	return c
 }
 
+func getDamageBoost(c []DamageBoost, dType DAMAGETYPE) (re DamageBoost, has bool) {
+	for i := range c {
+		if c[i].DamageBoostType == dType {
+			has = true
+			re = c[i]
+			return
+		}
+	}
+	has = false
+	re = DamageBoost{}
+	re.DamageBoostType = dType
+	re.DamageType = DAMAGEMAPNEGATIVE[dType]
+	return
+}
+
 //DamageBoosts かける関数
 func mergeDamageBoost(c []DamageBoost, toAdd ...[]DamageBoost) []DamageBoost {
 	var resMap = []DamageBoost{}
-	for _, v := range DamageTypeList {
-		resMap[v] = c[v]
-		for i := range toAdd {
-			resMap[v].add(toAdd[i][v])
+	for i, v := range DamageTypeList {
+		x, _ := getDamageBoost(c, v)
+		resMap = append(resMap, x)
+		for ii := range toAdd {
+			xx, _ := getDamageBoost(toAdd[ii], v)
+			resMap[i].add(xx)
 		}
 	}
 	return resMap
@@ -246,19 +263,23 @@ type Character struct {
 	Artifacts []BaseArtifact `json:"artifacts"`
 	Skills    []BaseSkill    `json:"skills"`
 	//Groups
-	GroupsMap       map[int][]int    `json:"groupsMap"`
-	ArtifactsInOne  map[int]Artifact `json:"artifactsInOne"`
-	DamageBoosts    [][]DamageBoost  `json:"damageBoosts"`
-	BaseAtk         []float32        `json:"baseAtk"`
-	Atk             []float32        `json:"atk"`
-	Def             []float32        `json:"def"`
-	BooldMax        []float32        `json:"booldMax"`
-	BooldRate       []float32        `json:"booldRate"`
-	BooldCurrent    []float32        `json:"booldCurrent"`
-	CritRate        []float32        `json:"critRate"`
-	CritDamageRate  []float32        `json:"critDamageRate"`
-	EleValue        []float32        `json:"eleValue"`
-	EleReactionRate []float32        `json:"eleReactionRate"`
+	GroupsMap       map[int][]int         `json:"groupsMap"`
+	ArtifactsInOne  map[int]Artifact      `json:"artifactsInOne"`
+	DamageBoosts    map[int][]DamageBoost `json:"damageBoosts"`
+	BaseAtk         map[int]float32       `json:"baseAtk"`
+	Atk             map[int]float32       `json:"atk"`
+	Def             map[int]float32       `json:"def"`
+	BooldMax        map[int]float32       `json:"booldMax"`
+	BooldRate       map[int]float32       `json:"booldRate"`
+	BooldCurrent    map[int]float32       `json:"booldCurrent"`
+	CritRate        map[int]float32       `json:"critRate"`
+	CritDamageRate  map[int]float32       `json:"critDamageRate"`
+	EleValue        map[int]float32       `json:"eleValue"`
+	EleReactionRate map[int]float32       `json:"eleReactionRate"`
+	//Decrease
+	Decrease Decrease `json:"decrease"`
+	//Results
+	Results map[int][]Result `json:"results"`
 }
 
 //Decrease デバフ
@@ -279,7 +300,46 @@ type Result struct {
 	FinalEleDamageAverage     float32 `json:"finalEleDamageAverage"`
 }
 
-func (c *Character) init() {
+//Init 初期化
+func (c *Character) Init() {
+	//初期化
+	if c.DamageBoosts == nil {
+		c.DamageBoosts = map[int][]DamageBoost{}
+	}
+	if c.BaseAtk == nil {
+		c.BaseAtk = map[int]float32{}
+	}
+	if c.Atk == nil {
+		c.Atk = map[int]float32{}
+	}
+	if c.Def == nil {
+		c.Def = map[int]float32{}
+	}
+	if c.BooldMax == nil {
+		c.BooldMax = map[int]float32{}
+	}
+	if c.BooldRate == nil {
+		c.BooldRate = map[int]float32{}
+	}
+	if c.BooldCurrent == nil {
+		c.BooldCurrent = map[int]float32{}
+	}
+	if c.CritRate == nil {
+		c.CritRate = map[int]float32{}
+	}
+	if c.CritDamageRate == nil {
+		c.CritDamageRate = map[int]float32{}
+	}
+	if c.EleValue == nil {
+		c.EleValue = map[int]float32{}
+	}
+	if c.EleReactionRate == nil {
+		c.EleReactionRate = map[int]float32{}
+	}
+	if c.Results == nil {
+		c.Results = map[int][]Result{}
+	}
+
 	baseChara := &c.Character
 	baseChara.init()
 	weapon := &c.Weapon
@@ -298,9 +358,9 @@ func (c *Character) init() {
 		artifactsInOne := c.ArtifactsInOne[i]
 
 		c.BaseAtk[i] = baseChara.Atk + weapon.Atk
-		c.Atk[i] = c.BaseAtk[i] + c.BaseAtk[i]*(1+baseChara.AtkBuffRate+weapon.AtkBuffRate+artifactsInOne.AtkBuffRate) + artifactsInOne.Atk
-		c.Def[i] = baseChara.Def + baseChara.Def*(1+baseChara.DefBuffRate+weapon.DefBuffRate+artifactsInOne.DefBuffRate) + artifactsInOne.Def
-		c.BooldMax[i] = baseChara.Boold + baseChara.Boold*(1+baseChara.BooldBuffRate+weapon.BooldBuffRate+artifactsInOne.BooldBuffRate) + artifactsInOne.Boold
+		c.Atk[i] = c.BaseAtk[i] + c.BaseAtk[i]*(baseChara.AtkBuffRate+weapon.AtkBuffRate+artifactsInOne.AtkBuffRate) + artifactsInOne.Atk
+		c.Def[i] = baseChara.Def + baseChara.Def*(baseChara.DefBuffRate+weapon.DefBuffRate+artifactsInOne.DefBuffRate) + artifactsInOne.Def
+		c.BooldMax[i] = baseChara.Boold + baseChara.Boold*(baseChara.BooldBuffRate+weapon.BooldBuffRate+artifactsInOne.BooldBuffRate) + artifactsInOne.Boold
 		c.DamageBoosts[i] = mergeDamageBoost(baseChara.DamageBoosts, baseChara.DamageBoostBuffs, weapon.DamageBoostBuffs, artifactsInOne.DamageBoostBuffs)
 		c.CritRate[i] = baseChara.CritRate + baseChara.CritRateBuff + weapon.CritRateBuff + artifactsInOne.CritRateBuff
 		c.CritDamageRate[i] = baseChara.CritDamageRate + baseChara.CritDamageRateBuff + weapon.CritDamageRateBuff + artifactsInOne.CritDamageRateBuff
@@ -329,20 +389,20 @@ func calAllArtifacts(s []BaseArtifact) (groups map[int][]int, res map[int]Artifa
 		var tempRes Artifact = Artifact{}
 		//合計
 		for _, vv := range v {
-			tempRes.Atk = s[vv].Atk + s[vv].MainAtk
-			tempRes.Def = s[vv].Def + s[vv].MainDef
-			tempRes.Boold = s[vv].Boold + s[vv].MainBoold
-			tempRes.EleValue = s[vv].EleValue + s[vv].MainEleValue
-			tempRes.AtkBuffRate = s[vv].AtkBuffRate + s[vv].MainAtkBuffRate
-			tempRes.DefBuffRate = s[vv].DefBuffRate + s[vv].MainDefBuffRate
-			tempRes.BooldBuffRate = s[vv].BooldBuffRate + s[vv].MainBooldBuffRate
+			tempRes.Atk += s[vv].Atk + s[vv].MainAtk
+			tempRes.Def += s[vv].Def + s[vv].MainDef
+			tempRes.Boold += s[vv].Boold + s[vv].MainBoold
+			tempRes.EleValue += s[vv].EleValue + s[vv].MainEleValue
+			tempRes.AtkBuffRate += s[vv].AtkBuffRate + s[vv].MainAtkBuffRate
+			tempRes.DefBuffRate += s[vv].DefBuffRate + s[vv].MainDefBuffRate
+			tempRes.BooldBuffRate += s[vv].BooldBuffRate + s[vv].MainBooldBuffRate
 
-			tempRes.DamageBoostBuffs = mergeDamageBoost(s[vv].DamageBoostBuffs, s[vv].MainDamageBoostBuffs)
+			tempRes.DamageBoostBuffs = mergeDamageBoost(tempRes.DamageBoostBuffs, mergeDamageBoost(s[vv].DamageBoostBuffs, s[vv].MainDamageBoostBuffs))
 
-			tempRes.CritRateBuff = s[vv].CritRateBuff + s[vv].MainCritRateBuff
-			tempRes.CritDamageRateBuff = s[vv].CritDamageRateBuff + s[vv].MainCritDamageRateBuff
-			tempRes.EleValueBuff = s[vv].EleValueBuff + s[vv].MainEleValueBuff
-			tempRes.ChargeRateBuff = s[vv].ChargeRateBuff + s[vv].MainChargeRateBuff
+			tempRes.CritRateBuff += s[vv].CritRateBuff + s[vv].MainCritRateBuff
+			tempRes.CritDamageRateBuff += s[vv].CritDamageRateBuff + s[vv].MainCritDamageRateBuff
+			tempRes.EleValueBuff += s[vv].EleValueBuff + s[vv].MainEleValueBuff
+			tempRes.ChargeRateBuff += s[vv].ChargeRateBuff + s[vv].MainChargeRateBuff
 		}
 
 		tempRes.init()
