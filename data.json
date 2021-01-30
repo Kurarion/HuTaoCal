@@ -120,7 +120,8 @@
                 "name": "重击【lv10】【火】",
                 "damageRate": 2.4257,
                 "damageTypes": [
-                    "重"
+                    "重",
+                    "火"
                 ]
             },
             {
@@ -198,7 +199,7 @@
         "booldBuffRate": 0,
         "damageBoostBuffs": [
             {
-                "damageBoostRate": 0.15,
+                "damageBoostRate": 0.2,
                 "damageType": "Q"
             },
             {
@@ -208,7 +209,13 @@
         ],
         "critRateBuff": 0,
         "critDamageRateBuff": 0.384,
-        "eleValueBuff": 0
+        "eleValueBuff": 0,
+        "useE": true,
+        "upAtkByBooldBuff": 0.0715,
+        "upMaxBaseAtkRate": 4,
+        "underHalf": true,
+        "upDamageBoostType": "火",
+        "upDamageBoostBuff": 0.33
     },
     "weapon": {
         "atk": 608,
@@ -218,7 +225,9 @@
         "damageBoostBuffs": [],
         "critRateBuff": 0,
         "critDamageRateBuff": 0.662,
-        "eleValueBuff": 0
+        "eleValueBuff": 0,
+        "addAtkByBoold": 0.016,
+        "addAtkByHalfBoold": 0.018
     },
     "artifacts": [
         {
@@ -248,7 +257,9 @@
             "chargeRateBuff": 0.058,
             "name": "5-宗室面具-爆伤",
             "groups": [
-                1,2,3
+                1,
+                2,
+                3
             ],
             "use": true
         },
@@ -279,7 +290,9 @@
             "chargeRateBuff": 0.045,
             "name": "1-宗室花-生命值",
             "groups": [
-                1,2,3
+                1,
+                2,
+                3
             ],
             "use": true
         },
@@ -315,7 +328,9 @@
             "chargeRateBuff": 0.175,
             "name": "4-魔女心-火伤",
             "groups": [
-                1,2,3
+                1,
+                2,
+                3
             ],
             "use": true
         },
@@ -439,7 +454,9 @@
             "chargeRateBuff": 0,
             "name": "3-魔女沙漏【假】-生命百分比",
             "groups": [
-                1,2,3
+                1,
+                2,
+                3
             ],
             "use": true
         }

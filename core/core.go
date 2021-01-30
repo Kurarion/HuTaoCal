@@ -55,6 +55,9 @@ func CalDamage(path string) (types.Character, error) {
 			skillPowerRate, damageBoostRate := calDamageBoostRate(skills[ii], damageBoostRates)
 			//結果
 			var tempResult types.Result = types.Result{}
+			//name
+			tempResult.SkillName = skills[ii].Name
+			//result
 			tempResult.FinalDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * decrese.FinalDamageDownRate
 			tempResult.FinalDamageWithCrit = tempResult.FinalDamageWithoutCrit * (1 + critDamageRate)
 			if critRate > 1 {

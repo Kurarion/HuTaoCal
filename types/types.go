@@ -145,6 +145,13 @@ type BaseCharacter struct {
 	CritRateBuff       float32       `json:"critRateBuff"`
 	CritDamageRateBuff float32       `json:"critDamageRateBuff"`
 	EleValueBuff       float32       `json:"eleValueBuff"`
+	//hutao buff
+	UseE              bool    `json:"useE"`
+	UpAtkByBooldBuff  float32 `json:"upAtkByBooldBuff"`
+	UpMaxBaseAtkRate  float32 `json:"upMaxBaseAtkRate"`
+	UnderHalf         bool    `json:"underHalf"`
+	UpDamageBoostType string  `json:"upDamageBoostType"`
+	UpDamageBoostBuff float32 `json:"upDamageBoostBuff"`
 }
 
 //チャラベースの初期化
@@ -173,6 +180,9 @@ type BaseWeapon struct {
 	CritRateBuff       float32       `json:"critRateBuff"`
 	CritDamageRateBuff float32       `json:"critDamageRateBuff"`
 	EleValueBuff       float32       `json:"eleValueBuff"`
+	//humo buff
+	AddAtkByBoold     float32 `json:"addAtkByBoold"`
+	AddAtkByHalfBoold float32 `json:"addAtkByHalfBoold"`
 }
 
 //武器の初期化
@@ -267,6 +277,8 @@ type Character struct {
 	ArtifactsInOne  map[int]Artifact      `json:"artifactsInOne"`
 	DamageBoosts    map[int][]DamageBoost `json:"damageBoosts"`
 	BaseAtk         map[int]float32       `json:"baseAtk"`
+	HuTaoUpAtkMax   map[int]float32       `json:"huTaoUpAtkMax"`
+	HuTaoUpAtk      map[int]float32       `json:"huTaoUpAtk"`
 	Atk             map[int]float32       `json:"atk"`
 	Def             map[int]float32       `json:"def"`
 	BooldMax        map[int]float32       `json:"booldMax"`
@@ -291,6 +303,8 @@ type Decrease struct {
 
 //Result 計算結果ストラクト
 type Result struct {
+	//skill name
+	SkillName string `json:"skillName"`
 	//damageResult
 	FinalDamageWithoutCrit    float32 `json:"finalDamageWithoutCrit"`
 	FinalDamageWithCrit       float32 `json:"finalDamageWithCrit"`
@@ -311,6 +325,12 @@ func (c *Character) Init() {
 	}
 	if c.Atk == nil {
 		c.Atk = map[int]float32{}
+	}
+	if c.HuTaoUpAtkMax == nil {
+		c.HuTaoUpAtkMax = map[int]float32{}
+	}
+	if c.HuTaoUpAtk == nil {
+		c.HuTaoUpAtk = map[int]float32{}
 	}
 	if c.Def == nil {
 		c.Def = map[int]float32{}
@@ -365,6 +385,9 @@ func (c *Character) Init() {
 		c.CritRate[i] = baseChara.CritRate + baseChara.CritRateBuff + weapon.CritRateBuff + artifactsInOne.CritRateBuff
 		c.CritDamageRate[i] = baseChara.CritDamageRate + baseChara.CritDamageRateBuff + weapon.CritDamageRateBuff + artifactsInOne.CritDamageRateBuff
 		c.EleValue[i] = baseChara.EleValue + baseChara.EleValueBuff + weapon.EleValueBuff + artifactsInOne.EleValueBuff
+
+		//huTaoAndhumoBuff
+		huTaoAndhumoBuff(c, i)
 	}
 
 }
@@ -410,4 +433,35 @@ func calAllArtifacts(s []BaseArtifact) (groups map[int][]int, res map[int]Artifa
 		res[i] = tempRes
 	}
 	return
+}
+
+//huTaoAndhumoBuff buff
+func huTaoAndhumoBuff(c *Character, i int) {
+	//humo
+	c.Atk[i] += c.Weapon.AddAtkByBoold * c.BooldMax[i]
+	if c.Character.UseE {
+		//hutao
+		toUp := c.Character.UpAtkByBooldBuff * c.BooldMax[i]
+		toUpMax := c.BaseAtk[i] * c.Character.UpMaxBaseAtkRate
+		if toUp > toUpMax {
+			toUp = toUpMax
+		}
+		c.HuTaoUpAtk[i] = toUp
+		c.HuTaoUpAtkMax[i] = toUpMax
+		c.Atk[i] += toUp
+	}
+	if c.Character.UnderHalf {
+		//hutao
+		temp := DamageBoost{
+			DamageBoostRate: c.Character.UpDamageBoostBuff,
+			DamageType:      c.Character.UpDamageBoostType,
+			DamageBoostType: DAMAGEMAP[c.Character.UpDamageBoostType],
+		}
+		c.DamageBoosts[i] = mergeDamageBoost(c.DamageBoosts[i], []DamageBoost{temp})
+		//humo
+		c.Atk[i] += c.Weapon.AddAtkByHalfBoold * c.BooldMax[i]
+		//other
+		c.BooldRate[i] = 0.5
+		c.BooldCurrent[i] = c.BooldRate[i] * c.BooldMax[i]
+	}
 }
