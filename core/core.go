@@ -28,10 +28,10 @@ func CalDamage(path string) (types.Character, error) {
 	character.Init()
 
 	//環境デバフ等
-	var decrese = getDecrease(&character)
-	decrese.MonstarResisRate = getMonstarResisRate()
-	decrese.LevelResisRate = getLevelResisRate()
-	decrese.FinalDamageDownRate = decrese.LevelResisRate * decrese.MonstarResisRate
+	decrese := getDecrease(&character)
+	decrese.LevelResisRate = getLevelResisRate(&character)
+	//モンスター
+	monsterEleResisRates := getMonsterEleResisRates(&character)
 	//相対固定
 	skills := getSkills(&character)
 	groupMap := getGroupMap(&character)
@@ -53,24 +53,29 @@ func CalDamage(path string) (types.Character, error) {
 		for ii := range skills {
 			//適用
 			skillPowerRate, damageBoostRate := calDamageBoostRate(skills[ii], damageBoostRates)
+			currentMonsterResisRate := calDamageResisRate(skills[ii], monsterEleResisRates)
+			currentDamageDownRate := decrese.LevelResisRate * currentMonsterResisRate
 			//結果
 			var tempResult types.Result = types.Result{}
 			//name
 			tempResult.SkillName = skills[ii].Name
 			//result
-			tempResult.FinalDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * decrese.FinalDamageDownRate
+			tempResult.FinalDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * currentDamageDownRate
 			tempResult.FinalDamageWithCrit = tempResult.FinalDamageWithoutCrit * (1 + critDamageRate)
 			if critRate > 1 {
 				tempResult.FinalDamageAverage = tempResult.FinalDamageWithCrit
 			} else {
 				tempResult.FinalDamageAverage = tempResult.FinalDamageWithCrit*critRate + tempResult.FinalDamageWithoutCrit*(1-critRate)
 			}
-			tempResult.FinalEleDamageWithoutCrit = atk * skillPowerRate * (1 + damageBoostRate) * decrese.FinalDamageDownRate * (1 + eleReactionRate)
-			tempResult.FinalEleDamageWithCrit = tempResult.FinalEleDamageWithoutCrit * (1 + critDamageRate)
-			if critRate > 1 {
-				tempResult.FinalEleDamageAverage = tempResult.FinalEleDamageWithCrit
-			} else {
-				tempResult.FinalEleDamageAverage = tempResult.FinalEleDamageWithCrit*critRate + tempResult.FinalEleDamageWithoutCrit*(1-critRate)
+			//判断元素増幅
+			reactionMaps := skills[ii].GetEleReation()
+			for iii, vvv := range reactionMaps {
+				var tempEleResult = types.EleResult{}
+				tempEleResult.ReactionName = vvv
+				tempEleResult.FinalEleDamageWithoutCrit = tempResult.FinalDamageWithoutCrit * iii * (1 + eleReactionRate)
+				tempEleResult.FinalEleDamageWithCrit = tempResult.FinalDamageWithCrit * iii * (1 + eleReactionRate)
+				tempEleResult.FinalEleDamageAverage = tempResult.FinalDamageAverage * iii * (1 + eleReactionRate)
+				tempResult.FinalEleResult = append(tempResult.FinalEleResult, tempEleResult)
 			}
 
 			tempResults = append(tempResults, tempResult)
@@ -89,6 +94,20 @@ func calDamageBoostRate(skill types.BaseSkill, boosts []types.DamageBoost) (skil
 		for ii := range boosts {
 			if boosts[ii].DamageBoostType == v {
 				damageBoostRate += boosts[ii].DamageBoostRate
+			}
+		}
+	}
+	return
+}
+
+func calDamageResisRate(skill types.BaseSkill, ResisRates []types.DamageBoost) (damageResisRate float32) {
+	damageResisRate = 1
+	for _, v := range skill.DamageBoostTypes {
+
+		for ii := range ResisRates {
+			if ResisRates[ii].DamageBoostType == v {
+				damageResisRate = (1 - ResisRates[ii].DamageBoostRate)
+				return
 			}
 		}
 	}
@@ -116,7 +135,7 @@ func getSkills(c *types.Character) []types.BaseSkill {
 }
 
 func getDecrease(c *types.Character) types.Decrease {
-	return c.Decrease
+	return c.DamageDecrease
 }
 
 func getResultMap(c *types.Character) map[int][]types.Result {
@@ -139,10 +158,10 @@ func getEleReactionRate(c *types.Character, i int) float32 {
 	return c.EleReactionRate[i]
 }
 
-func getMonstarResisRate() float32 {
-	return 0.9
+func getMonsterEleResisRates(c *types.Character) []types.DamageBoost {
+	return c.Monster.FinalEleResisRates
 }
 
-func getLevelResisRate() float32 {
-	return 0.503
+func getLevelResisRate(c *types.Character) float32 {
+	return c.DamageDecrease.LevelResisRate
 }

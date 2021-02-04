@@ -1,116 +1,13 @@
 {
     "character": {
+        "level": 90,
         "atk": 106,
         "def": 876,
         "boold": 15552,
         "skills": [
             {
-                "name": "1-hit【lv10】",
-                "damageRate": 0.8365,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "2-hit【lv10】",
-                "damageRate": 0.8609,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "3-hit【lv10】",
-                "damageRate": 1.0892,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "4-hit【lv10】",
-                "damageRate": 1.1711,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "5-1-hit【lv10】",
-                "damageRate": 0.5936,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "5-2-hit【lv10】",
-                "damageRate": 0.628,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "6-hit【lv10】",
-                "damageRate": 1.5336,
-                "damageTypes": [
-                    "普"
-                ]
-            },
-            {
-                "name": "重击【lv10】",
-                "damageRate": 2.4257,
-                "damageTypes": [
-                    "重"
-                ]
-            },
-            {
                 "name": "1-hit【lv10】【火】",
                 "damageRate": 0.8365,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "2-hit【lv10】【火】",
-                "damageRate": 0.8609,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "3-hit【lv10】【火】",
-                "damageRate": 1.0892,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "4-hit【lv10】【火】",
-                "damageRate": 1.1711,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "5-1-hit【lv10】【火】",
-                "damageRate": 0.5936,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "5-2-hit【lv10】【火】",
-                "damageRate": 0.628,
-                "damageTypes": [
-                    "普",
-                    "火"
-                ]
-            },
-            {
-                "name": "6-hit【lv10】【火】",
-                "damageRate": 1.5336,
                 "damageTypes": [
                     "普",
                     "火"
@@ -121,14 +18,6 @@
                 "damageRate": 2.4257,
                 "damageTypes": [
                     "重",
-                    "火"
-                ]
-            },
-            {
-                "name": "Q 50%+【lv13】【火】",
-                "damageRate": 5.6478,
-                "damageTypes": [
-                    "Q",
                     "火"
                 ]
             },
@@ -259,7 +148,8 @@
             "groups": [
                 1,
                 2,
-                3
+                3,
+                4
             ],
             "use": true
         },
@@ -292,7 +182,8 @@
             "groups": [
                 1,
                 2,
-                3
+                3,
+                4
             ],
             "use": true
         },
@@ -442,37 +333,135 @@
             "mainChargeRateBuff": 0,
             "atk": 0,
             "def": 0,
+            "boold": 809,
+            "eleValue": 0,
+            "atkBuffRate": 0.047,
+            "defBuffRate": 0,
+            "booldBuffRate": 0,
+            "damageBoostBuffs": null,
+            "critRateBuff": 0,
+            "critDamageRateBuff": 0.202,
+            "eleValueBuff": 0,
+            "chargeRateBuff": 0,
+            "name": "3-魔女沙漏-生命百分比",
+            "groups": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "use": true
+        },
+        {
+            "mainAtk": 0,
+            "mainDef": 0,
+            "mainBoold": 0,
+            "mainEleValue": 0,
+            "mainAtkBuffRate": 0,
+            "mainDefBuffRate": 0,
+            "mainBooldBuffRate": 0,
+            "mainDamageBoostBuffs": [
+                {
+                    "damageBoostRate": 0.466,
+                    "damageType": "火"
+                }
+            ],
+            "mainCritRateBuff": 0,
+            "mainCritDamageRateBuff": 0,
+            "mainEleValueBuff": 0,
+            "mainChargeRateBuff": 0,
+            "atk": 0,
+            "def": 0,
+            "boold": 0,
+            "eleValue": 0,
+            "atkBuffRate": 0,
+            "defBuffRate": 0.197,
+            "booldBuffRate": 0,
+            "damageBoostBuffs": null,
+            "critRateBuff": 0.066,
+            "critDamageRateBuff": 0.078,
+            "eleValueBuff": 42,
+            "chargeRateBuff": 0,
+            "name": "4-渡火心-火伤",
+            "groups": [
+                4
+            ],
+            "use": true
+        },
+        {
+            "mainAtk": 0,
+            "mainDef": 0,
+            "mainBoold": 0,
+            "mainEleValue": 0,
+            "mainAtkBuffRate": 0,
+            "mainDefBuffRate": 0,
+            "mainBooldBuffRate": 0,
+            "mainDamageBoostBuffs": null,
+            "mainCritRateBuff": 0,
+            "mainCritDamageRateBuff": 0,
+            "mainEleValueBuff": 0,
+            "mainChargeRateBuff": 0,
+            "atk": 0,
+            "def": 0,
             "boold": 0,
             "eleValue": 0,
             "atkBuffRate": 0,
             "defBuffRate": 0,
             "booldBuffRate": 0,
             "damageBoostBuffs": null,
-            "critRateBuff": 0,
-            "critDamageRateBuff": 0,
-            "eleValueBuff": 0,
-            "chargeRateBuff": 0,
-            "name": "3-魔女沙漏【假】-生命百分比",
+            "critRateBuff": 0.105,
+            "critDamageRateBuff": 0.132,
+            "eleValueBuff": 16,
+            "chargeRateBuff": 0.104,
+            "name": "2-魔女毛-攻击",
             "groups": [
-                1,
-                2,
-                3
+                4
             ],
             "use": true
         }
     ],
-    "skills": null,
-    "groupsMap": null,
-    "artifactsInOne": null,
-    "damageBoosts": null,
-    "baseAtk": null,
-    "atk": null,
-    "def": null,
-    "booldMax": null,
-    "booldRate": null,
-    "booldCurrent": null,
-    "critRate": null,
-    "critDamageRate": null,
-    "eleValue": null,
-    "eleReactionRate": null
+    "monster": {
+        "level": 90,
+        "eleResisRates": [
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "物"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "火"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "水"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "冰"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "雷"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "风"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "岩"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "草"
+            }
+        ],
+        "eleDecreaseRates": [
+            {
+                "damageBoostRate": 0,
+                "damageType": "物"
+            }
+        ],
+        "defDeBuffRate": 0
+    }
 }

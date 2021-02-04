@@ -69,6 +69,24 @@ type BaseSkill struct {
 	DamageBoostTypes []DAMAGETYPE
 }
 
+//GetEleReation 元素反応
+func (c *BaseSkill) GetEleReation() (res map[float32]string) {
+	res = map[float32]string{}
+	for _, v := range c.DamageBoostTypes {
+		if v == FIRE {
+			res[1.5] = "蒸发"
+			res[2] = "融化"
+		}
+		if v == WATER {
+			res[2] = "蒸发"
+		}
+		if v == ICE {
+			res[1.5] = "融化"
+		}
+	}
+	return
+}
+
 //スキルの初期化
 func (c *BaseSkill) init() {
 	for _, v := range c.DamageTypes {
@@ -92,6 +110,14 @@ func (c *DamageBoost) init() {
 func (c *DamageBoost) add(toAdd DamageBoost) *DamageBoost {
 	if c.DamageBoostType == toAdd.DamageBoostType {
 		c.DamageBoostRate += toAdd.DamageBoostRate
+	}
+	return c
+}
+
+//DamageBoost 引く関数
+func (c *DamageBoost) decrease(toAdd DamageBoost) *DamageBoost {
+	if c.DamageBoostType == toAdd.DamageBoostType {
+		c.DamageBoostRate -= toAdd.DamageBoostRate
 	}
 	return c
 }
@@ -125,9 +151,52 @@ func mergeDamageBoost(c []DamageBoost, toAdd ...[]DamageBoost) []DamageBoost {
 	return resMap
 }
 
+//DamageBoosts 引く関数
+func mergeDamageBoostDecrease(c []DamageBoost, toAdd ...[]DamageBoost) []DamageBoost {
+	var resMap = []DamageBoost{}
+	for i, v := range DamageTypeList {
+		x, _ := getDamageBoost(c, v)
+		resMap = append(resMap, x)
+		for ii := range toAdd {
+			xx, _ := getDamageBoost(toAdd[ii], v)
+			resMap[i].decrease(xx)
+		}
+	}
+	return resMap
+}
+
+//BaseMonster モンスターベース
+type BaseMonster struct {
+	//base
+	Level              int           `json:"level"`
+	EleResisRates      []DamageBoost `json:"eleResisRates"`
+	EleDecreaseRates   []DamageBoost `json:"eleDecreaseRates"`
+	FinalEleResisRates []DamageBoost `json:"FinalEleResisRates"`
+	DefDeBuffRate      float32       `json:"defDeBuffRate"`
+}
+
+//モンスターベースの初期化
+func (c *BaseMonster) init() {
+	for i := range c.EleResisRates {
+		c.EleResisRates[i].init()
+	}
+	for i := range c.EleDecreaseRates {
+		c.EleDecreaseRates[i].init()
+	}
+	//最終耐性計算
+	c.FinalEleResisRates = mergeDamageBoostDecrease(c.EleResisRates, c.EleDecreaseRates)
+	//結果修正
+	for i := range c.FinalEleResisRates {
+		if c.FinalEleResisRates[i].DamageBoostRate < 0 {
+			c.FinalEleResisRates[i].DamageBoostRate *= 0.5
+		}
+	}
+}
+
 //BaseCharacter チャラベース
 type BaseCharacter struct {
 	//base
+	Level          int           `json:"level"`
 	Atk            float32       `json:"atk"`
 	Def            float32       `json:"def"`
 	Boold          float32       `json:"boold"`
@@ -272,6 +341,8 @@ type Character struct {
 	Weapon    BaseWeapon     `json:"weapon"`
 	Artifacts []BaseArtifact `json:"artifacts"`
 	Skills    []BaseSkill    `json:"skills"`
+	//monstrt
+	Monster BaseMonster `json:"monster"`
 	//Groups
 	GroupsMap       map[int][]int         `json:"groupsMap"`
 	ArtifactsInOne  map[int]Artifact      `json:"artifactsInOne"`
@@ -289,16 +360,14 @@ type Character struct {
 	EleValue        map[int]float32       `json:"eleValue"`
 	EleReactionRate map[int]float32       `json:"eleReactionRate"`
 	//Decrease
-	Decrease Decrease `json:"decrease"`
+	DamageDecrease Decrease `json:"damageDecrease"`
 	//Results
 	Results map[int][]Result `json:"results"`
 }
 
 //Decrease デバフ
 type Decrease struct {
-	MonstarResisRate    float32 `json:"monstarResisRate"`
-	LevelResisRate      float32 `json:"levelResisRate"`
-	FinalDamageDownRate float32 `json:"finalDamageDownRate"`
+	LevelResisRate float32 `json:"levelResisRate"`
 }
 
 //Result 計算結果ストラクト
@@ -306,9 +375,17 @@ type Result struct {
 	//skill name
 	SkillName string `json:"skillName"`
 	//damageResult
-	FinalDamageWithoutCrit    float32 `json:"finalDamageWithoutCrit"`
-	FinalDamageWithCrit       float32 `json:"finalDamageWithCrit"`
-	FinalDamageAverage        float32 `json:"finalDamageAverage"`
+	FinalDamageWithoutCrit float32     `json:"finalDamageWithoutCrit"`
+	FinalDamageWithCrit    float32     `json:"finalDamageWithCrit"`
+	FinalDamageAverage     float32     `json:"finalDamageAverage"`
+	FinalEleResult         []EleResult `json:"finalEleResult"`
+}
+
+//EleResult 元素増幅計算結果ストラクト
+type EleResult struct {
+	//skill name
+	ReactionName string `json:"reactionName"`
+	//damageResult
 	FinalEleDamageWithoutCrit float32 `json:"finalEleDamageWithoutCrit"`
 	FinalEleDamageWithCrit    float32 `json:"finalEleDamageWithCrit"`
 	FinalEleDamageAverage     float32 `json:"finalEleDamageAverage"`
@@ -362,6 +439,8 @@ func (c *Character) Init() {
 
 	baseChara := &c.Character
 	baseChara.init()
+	baseMonster := &c.Monster
+	baseMonster.init()
 	weapon := &c.Weapon
 	weapon.init()
 	for i := range c.Artifacts {
@@ -385,11 +464,26 @@ func (c *Character) Init() {
 		c.CritRate[i] = baseChara.CritRate + baseChara.CritRateBuff + weapon.CritRateBuff + artifactsInOne.CritRateBuff
 		c.CritDamageRate[i] = baseChara.CritDamageRate + baseChara.CritDamageRateBuff + weapon.CritDamageRateBuff + artifactsInOne.CritDamageRateBuff
 		c.EleValue[i] = baseChara.EleValue + baseChara.EleValueBuff + weapon.EleValueBuff + artifactsInOne.EleValueBuff
+		if c.EleValue[i] == 0 {
+			c.EleReactionRate[i] = 0
+		} else {
+			c.EleReactionRate[i] = (6.665 - 9340/(c.EleValue[i]+1401)) / 2.4
+		}
 
 		//huTaoAndhumoBuff
 		huTaoAndhumoBuff(c, i)
 	}
 
+	//ダメージ軽減
+	var result float32 = 1.0
+	result = (float32(c.Character.Level) + 100.0) / (float32(c.Character.Level) + 100.0 + ((float32(c.Monster.Level) + 100.0) * (1.0 - c.Monster.DefDeBuffRate)))
+	//レベル圧制
+	if c.Character.Level-c.Monster.Level >= 70 && c.Monster.Level <= 10 {
+		result *= 1.5
+	} else if c.Monster.Level-c.Character.Level >= 70 && c.Character.Level <= 10 {
+		result *= 0.5
+	}
+	c.DamageDecrease.LevelResisRate = result
 }
 
 //すべての聖遺物を合計
@@ -397,6 +491,7 @@ func calAllArtifacts(s []BaseArtifact) (groups map[int][]int, res map[int]Artifa
 	groups = map[int][]int{}
 	res = map[int]Artifact{}
 	//1. グループの確認
+	var hasGroup bool = false
 	for i, v := range s {
 		//グループに追加
 		for _, vv := range v.Groups {
@@ -405,7 +500,11 @@ func calAllArtifacts(s []BaseArtifact) (groups map[int][]int, res map[int]Artifa
 				groups[vv] = []int{}
 			}
 			groups[vv] = append(groups[vv], i)
+			hasGroup = true
 		}
+	}
+	if !hasGroup {
+		groups[0] = []int{}
 	}
 	//2. グループ一つづつ計算
 	for i, v := range groups {
