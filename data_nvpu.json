@@ -1,0 +1,153 @@
+{
+    "character": {
+        "level": 90,
+        "atk": 1307,
+        "def": 1892,
+        "boold": 12071,
+        "CurrentBooldRate": 1,
+        "skills": [
+            {
+                "name": "1-hit【lv9】【岩】",
+                "damageRate": 1.4536,
+                "damageTypes": [
+                    "普",
+                    "岩"
+                ]
+            },
+            {
+                "name": "2-hit【lv9】【岩】",
+                "damageRate": 1.3477,
+                "damageTypes": [
+                    "普",
+                    "岩"
+                ]
+            }
+        ],
+        "damageBoosts": [
+            {
+                "damageBoostRate": 0,
+                "damageType": "普"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "重"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "E"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "Q"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "物"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "火"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "水"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "冰"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "雷"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "风"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "岩"
+            },
+            {
+                "damageBoostRate": 0,
+                "damageType": "草"
+            }
+        ],
+        "critRate": 0.513,
+        "critDamageRate": 1.215,
+        "eleValue": 0,
+        "atkBuffRate": 0,
+        "defBuffRate": 0,
+        "booldBuffRate": 0,
+        "damageBoostBuffs": [
+            {
+                "damageBoostRate": 0.4,
+                "damageType": "普"
+            },
+            {
+                "damageBoostRate": 0.4,
+                "damageType": "重"
+            },
+            {
+                "damageBoostRate": 0.466,
+                "damageType": "岩"
+            },
+            {
+                "damageBoostRate": 0.12,
+                "damageType": "全"
+            }
+        ],
+        "critRateBuff": 0,
+        "critDamageRateBuff": 0,
+        "eleValueBuff": 0,
+        "nuoaier":{
+            "on":true,
+            "useQ": true,
+            "defToAtkRate": 1.26
+        }
+    },
+    "monster": {
+        "level": 78,
+        "eleResisRates": [
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "物"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "火"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "水"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "冰"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "雷"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "风"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "岩"
+            },
+            {
+                "damageBoostRate": 0.1,
+                "damageType": "草"
+            }
+        ],
+        "eleDecreaseRates": [
+            {
+                "damageBoostRate": 0,
+                "damageType": "物"
+            }
+        ],
+        "defDeBuffRate": 0
+    }
+}

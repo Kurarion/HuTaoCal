@@ -7,7 +7,7 @@ import (
 )
 
 //ReadJSON JSONファイルの読み込み
-func ReadJSON(path string) (chara types.Character, err error) {
+func ReadJSON(path string) (chara types.Data, err error) {
 	var content []byte
 	content, err = ioutil.ReadFile(path)
 	if err != nil {
