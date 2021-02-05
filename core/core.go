@@ -19,34 +19,34 @@ func GenerateJSON(toGen interface{}, err error) string {
 }
 
 //CalDamage 計算最終ダメージ
-func CalDamage(path string) (types.Character, error) {
+func CalDamage(path string) (types.Data, error) {
 	//JSONからデータを読み込み
-	character, err := json.ReadJSON(path)
+	data, err := json.ReadJSON(path)
 	if err != nil {
-		return types.Character{}, err
+		return types.Data{}, err
 	}
-	character.Init()
+	data.Init()
 
 	//環境デバフ等
-	decrese := getDecrease(&character)
-	decrese.LevelResisRate = getLevelResisRate(&character)
+	decrese := getDecrease(&data)
+	decrese.LevelResisRate = getLevelResisRate(&data)
 	//モンスター
-	monsterEleResisRates := getMonsterEleResisRates(&character)
+	monsterEleResisRates := getMonsterEleResisRates(&data)
 	//相対固定
-	skills := getSkills(&character)
-	groupMap := getGroupMap(&character)
+	skills := getSkills(&data)
+	groupMap := getGroupMap(&data)
 	//ResultMap
-	resultMap := getResultMap(&character)
+	resultMap := getResultMap(&data)
 	for i := range groupMap {
 		//配置順で計算
 		//計算用
-		atk := getAtk(&character, i)
-		// def := getDef(&character, i)
-		// boold := getBoold(&character, i)
-		damageBoostRates := getDamageBoostRate(&character, i)
-		critRate := getCritRate(&character, i)
-		critDamageRate := getCritDamageRate(&character, i)
-		eleReactionRate := getEleReactionRate(&character, i)
+		atk := getAtk(&data, i)
+		// def := getDef(&data, i)
+		// boold := getBoold(&data, i)
+		damageBoostRates := getDamageBoostRate(&data, i)
+		critRate := getCritRate(&data, i)
+		critDamageRate := getCritDamageRate(&data, i)
+		eleReactionRate := getEleReactionRate(&data, i)
 		//Result
 		var tempResults []types.Result = []types.Result{}
 		//スキル順で計算
@@ -83,85 +83,5 @@ func CalDamage(path string) (types.Character, error) {
 		resultMap[i] = tempResults
 	}
 
-	return character, nil
-}
-
-func calDamageBoostRate(skill types.BaseSkill, boosts []types.DamageBoost) (skillPowerRate, damageBoostRate float32) {
-	skillPowerRate = skill.DamageRate
-	damageBoostRate = 0
-	for _, v := range skill.DamageBoostTypes {
-
-		for ii := range boosts {
-			if boosts[ii].DamageBoostType == v {
-				damageBoostRate += boosts[ii].DamageBoostRate
-			}
-		}
-	}
-	return
-}
-
-func calDamageResisRate(skill types.BaseSkill, ResisRates []types.DamageBoost) (damageResisRate float32) {
-	damageResisRate = 1
-	for _, v := range skill.DamageBoostTypes {
-
-		for ii := range ResisRates {
-			if ResisRates[ii].DamageBoostType == v {
-				damageResisRate = (1 - ResisRates[ii].DamageBoostRate)
-				return
-			}
-		}
-	}
-	return
-}
-
-func getGroupMap(c *types.Character) map[int][]int {
-	return c.GroupsMap
-}
-
-func getAtk(c *types.Character, i int) float32 {
-	return c.Atk[i]
-}
-
-func getDef(c *types.Character, i int) float32 {
-	return c.Def[i]
-}
-
-func getBoold(c *types.Character, i int) float32 {
-	return c.BooldMax[i]
-}
-
-func getSkills(c *types.Character) []types.BaseSkill {
-	return c.Skills
-}
-
-func getDecrease(c *types.Character) types.Decrease {
-	return c.DamageDecrease
-}
-
-func getResultMap(c *types.Character) map[int][]types.Result {
-	return c.Results
-}
-
-func getDamageBoostRate(c *types.Character, i int) []types.DamageBoost {
-	return c.DamageBoosts[i]
-}
-
-func getCritRate(c *types.Character, i int) float32 {
-	return c.CritRate[i]
-}
-
-func getCritDamageRate(c *types.Character, i int) float32 {
-	return c.CritDamageRate[i]
-}
-
-func getEleReactionRate(c *types.Character, i int) float32 {
-	return c.EleReactionRate[i]
-}
-
-func getMonsterEleResisRates(c *types.Character) []types.DamageBoost {
-	return c.Monster.FinalEleResisRates
-}
-
-func getLevelResisRate(c *types.Character) float32 {
-	return c.DamageDecrease.LevelResisRate
+	return data, nil
 }

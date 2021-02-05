@@ -4,6 +4,7 @@
         "atk": 106,
         "def": 876,
         "boold": 15552,
+        "CurrentBooldRate": 0.5,
         "skills": [
             {
                 "name": "1-hit【lv10】【火】",
@@ -99,12 +100,19 @@
         "critRateBuff": 0,
         "critDamageRateBuff": 0.384,
         "eleValueBuff": 0,
-        "useE": true,
-        "upAtkByBooldBuff": 0.0715,
-        "upMaxBaseAtkRate": 4,
-        "underHalf": true,
-        "upDamageBoostType": "火",
-        "upDamageBoostBuff": 0.33
+        "hutao":{
+            "on":true,
+            "useE": true,
+            "upAtkByBooldBuff": 0.0715,
+            "upMaxBaseAtkRate": 4,
+            "underHalfBooldUpDamageBoostType": "火",
+            "underHalfBooldUpDamageBoostBuff": 0.33
+        },
+        "nuoaier":{
+            "on":false,
+            "useQ": true,
+            "defToAtkRate": 1.3
+        }
     },
     "weapon": {
         "atk": 608,
@@ -115,8 +123,11 @@
         "critRateBuff": 0,
         "critDamageRateBuff": 0.662,
         "eleValueBuff": 0,
-        "addAtkByBoold": 0.016,
-        "addAtkByHalfBoold": 0.018
+        "humo":{
+            "on":true,
+            "addAtkByBoold": 0.016,
+            "addAtkByHalfBoold": 0.018
+        }
     },
     "artifacts": [
         {
@@ -389,7 +400,7 @@
             "use": true
         },
         {
-            "mainAtk": 0,
+            "mainAtk": 311,
             "mainDef": 0,
             "mainBoold": 0,
             "mainEleValue": 0,
